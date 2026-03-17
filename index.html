@@ -1984,24 +1984,30 @@
      GALLERY LIGHTBOX
   ───────────────────────────────────────── */
   (function () {
-    const galleryImgs = Array.from(document.querySelectorAll('.gallery-item img'));
+    const allImgs = Array.from(document.querySelectorAll('.gallery-item img'));
+
+    /* 라이트박스 활성화 사진 번호 (1-based): 1,2,3,5,7,8,9,10,11,12,13,15 */
+    const enabledNums = [1,2,3,5,7,8,9,10,11,12,13,15];
+    const lbImgs = enabledNums.map(function(n) { return allImgs[n - 1]; }).filter(Boolean);
+
     let currentIdx = 0;
 
-    /* 각 갤러리 이미지에 클릭 핸들러 등록 */
-    // galleryImgs.forEach(function (img, idx) {
-    //   img.addEventListener('click', function () { openLightbox(idx); });
-    // });
+    /* 활성화된 사진에만 클릭 핸들러 등록 */
+    lbImgs.forEach(function (img, idx) {
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', function () { openLightbox(idx); });
+    });
 
-    // function openLightbox(idx) {
-    //   currentIdx = idx;
-    //   const lb      = document.getElementById('lightbox');
-    //   const imgEl   = document.getElementById('lightbox-img');
-    //   const counter = document.getElementById('lightbox-counter');
-    //   imgEl.src           = galleryImgs[idx].src;
-    //   counter.textContent = (idx + 1) + ' / ' + galleryImgs.length;
-    //   lb.classList.add('active');
-    //   document.body.style.overflow = 'hidden';
-    // }
+    function openLightbox(idx) {
+      currentIdx = idx;
+      const lb      = document.getElementById('lightbox');
+      const imgEl   = document.getElementById('lightbox-img');
+      const counter = document.getElementById('lightbox-counter');
+      imgEl.src           = lbImgs[idx].src;
+      counter.textContent = (idx + 1) + ' / ' + lbImgs.length;
+      lb.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
 
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('active');
@@ -2009,7 +2015,7 @@
     }
 
     function moveLightbox(dir) {
-      currentIdx = (currentIdx + dir + galleryImgs.length) % galleryImgs.length;
+      currentIdx = (currentIdx + dir + lbImgs.length) % lbImgs.length;
       openLightbox(currentIdx);
     }
 
